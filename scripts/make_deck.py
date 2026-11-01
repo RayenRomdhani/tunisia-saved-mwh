@@ -1,4 +1,4 @@
-"""Write report/deck.pptx, an 8-slide summary of the study (plan Task 18). Numbers are read from results/*.csv.
+"""Write report/deck.pptx, a 10-slide summary of the study (plan Task 18). Numbers are read from results/*.csv.
 
 Run from the repo root after make_figures.py:  python scripts/make_deck.py
 """
@@ -57,13 +57,18 @@ def title(slide, words, colour=INK):
     text(slide, 0.6, 0.4, 12.1, 1.0, words, size=32, colour=colour, bold=True, font=HEAD)
 
 
+def tag(slide, words="2030 on its own, with no limit on building"):
+    """A small line under the title saying which runs the slide shows."""
+    text(slide, 0.6, 0.95, 12.1, 0.4, words, size=14, colour=MUTED)
+
+
 def footer(slide, colour=MUTED):
     text(slide, 0.6, 7.0, 12.1, 0.35, SOURCE, size=10, colour=colour)
 
 
-def stat(slide, x, y, w, value, label, value_colour=DARK, label_colour=INK):
+def stat(slide, x, y, w, value, label, value_colour=DARK, label_colour=INK, size=36):
     """A big number with a short label below it."""
-    text(slide, x, y, w, 0.9, value, size=36, colour=value_colour, bold=True, font=HEAD)
+    text(slide, x, y, w, 0.9, value, size=size, colour=value_colour, bold=True, font=HEAD)
     text(slide, x, y + 0.9, w, 0.9, label, size=14, colour=label_colour)
 
 
@@ -116,7 +121,7 @@ def main() -> None:
     sl = deck.slides.add_slide(blank)
     background(sl, DARK)
     text(sl, 0.8, 2.0, 11.5, 1.8, TITLE, size=44, colour=WHITE, bold=True, font=HEAD)
-    text(sl, 0.8, 3.9, 11.5, 0.6, f"What each MWh saved avoids in 2030, under the {target} renewable target",
+    text(sl, 0.8, 3.9, 11.5, 0.6, "What each MWh saved avoids from 2027 to 2030, at the pace Tunisia actually builds",
          size=22, colour=SUN)
     text(sl, 0.8, 5.6, 11.5, 0.9, [f"{AUTHOR}, Energy Engineering, ENIM (Monastir, Tunisia)",
                                    "PyPSA-Earth capacity-expansion model, 2 nodes, 8,760 hours"], size=16, colour=WHITE)
@@ -124,37 +129,47 @@ def main() -> None:
         f"Tunisia generates almost all its electricity from gas and plans {target} renewables by 2030. "
         "This study asks what saving electricity, or moving it in time, is worth to that system.")
 
-    # 2. Answer first
+    # 2. Answer first: the 2027-2030 pathway, built at Tunisia's demonstrated pace
+    ps = pd.read_csv("results/pathway_summary.csv").set_index(["scenario", "year"])
+    whole = pd.read_csv("results/pathway_avoided.csv").set_index(["scenario", "year"]).xs("2027-2030", level="year")
+    share = lambda sc: ps.loc[(sc, 2030), "res_share"]
+    new_ccgt = lambda sc: ps.loc[(sc, 2030), "cap_CCGT_mw"] - ps.loc[(sc, 2027), "cap_CCGT_mw"]
+    # The slide says the saving makes the new gas plants unnecessary; stop if a re-run changes that.
+    assert new_ccgt("S1-15") < 0.5, "S1-15 builds combined cycles on the pathway: rewrite slide 2"
+    pw = whole.loc["S1-15"]
     sl = deck.slides.add_slide(blank)
-    title(sl, f"Each MWh saved avoids about {head['cost_eur_per_mwh']:.0f} EUR of system cost")
-    text(sl, 0.6, 1.4, 12.1, 0.6, "Saving 15% of 2030 demand in every hour (S1-15 against the base case S0), per MWh saved:",
-         size=18, colour=MUTED)
-    stats = [(f"{head['cost_eur_per_mwh']:.0f} EUR", "of system cost (investment + operation)"),
-             (f"{head['gas_mwh_th_per_mwh']:.2f} MWh", "of gas burnt for power"),
-             (f"{head['co2_t_per_mwh']:.2f} t", "of CO2"),
-             (f"{head['capacity_mw_per_twh']:.0f} MW", "of new capacity per TWh saved per year")]
+    title(sl, f"Each MWh saved from 2027 to 2030 avoids about {pw['cost_eur_per_mwh']:.0f} EUR")
+    text(sl, 0.6, 1.4, 12.1, 0.6, "Built year by year at Tunisia's real pace; saving 15% by 2030 (S1-15) against no "
+                                  "extra saving (S0), per MWh saved:", size=18, colour=MUTED)
+    stats = [(f"{pw['cost_eur_per_mwh']:.0f} EUR", "of system cost (investment + operation)"),
+             (f"{pw['gas_mwh_th_per_mwh']:.2f} MWh", "of gas burnt for power"),
+             (f"{pw['co2_t_per_mwh']:.2f} t", "of CO2"),
+             (f"{new_ccgt('S0'):.0f} MW", "of new gas plants not needed (the whole saving)")]
     for i, (value, label) in enumerate(stats):
         card(sl, 0.6 + i * 3.1, 2.5, 2.8, 2.6)
-        stat(sl, 0.8 + i * 3.1, 2.8, 2.4, value, label)
+        stat(sl, 0.7 + i * 3.1, 2.8, 2.6, value, label, size=32)  # 32 pt keeps "1.95 MWh" on one line
     text(sl, 0.6, 5.5, 12.1, 1.2,
-         f"The avoided cost is close to the average power price ({s.loc['S0', 'avg_price_eur_mwh']:.0f} EUR/MWh) plus "
-         "the gas turbines the saving makes unnecessary.", size=16)
+         f"With little room to build solar, almost every saved MWh comes off a gas plant. In 2030 alone with no build "
+         f"limit, the same saving avoids {head['cost_eur_per_mwh']:.0f} EUR, {head['gas_mwh_th_per_mwh']:.2f} MWh of "
+         f"gas and {head['co2_t_per_mwh']:.2f} t of CO2.", size=16)
     footer(sl)
     sl.notes_slide.notes_text_frame.text = (
-        f"The headline metric compares two least-cost 2030 systems that both meet the {target} target and a {reserve} "
-        "reserve margin. The only difference is demand.")
+        "Each year from 2027 starts from the year before; committed projects arrive in their year; new solar is "
+        f"capped at {reg['pathway_solar_extra_mw_per_year']:.0f} MW a year. Without extra saving the model adds "
+        f"{new_ccgt('S0'):.0f} MW of combined cycles by 2030 for the {reserve} reserve margin; every saving scenario "
+        "adds none.")
 
     # 3. Method
     sl = deck.slides.add_slide(blank)
-    title(sl, "An open model, calibrated to 2024, then solved for 2030")
+    title(sl, "An open model, calibrated to 2024, then run to 2030")
     steps = [("1", "Base network", "PyPSA-Earth builds Tunisia's grid, plants, solar and wind potential and hourly "
                                    "demand from open data"),
              ("2", "2024 calibration", "Official ONEM fleet; one efficiency factor fitted so gas burnt matches "
                                        f"STEG within {abs(cal.at['gas_fuel_for_power_twh_th', 'diff_pct']):.1f}%"),
              ("3", f"{len(s)} scenarios", f"Demand cut {cuts[0]:.0%}-{cuts[-1]:.0%}, cooling-first saving, "
                                           f"shiftable load, gas price x{lo:g} and x{hi:g}"),
-             ("4", "Least-cost 2030", f"New solar, wind, batteries and gas; at least {target} renewable and "
-                                      f"{reserve} reserve in every run")]
+             ("4", "Two ways to 2030", "Year by year from 2027 at Tunisia's building pace; and 2030 alone with no "
+                                       f"build limit and at least {target} renewable. {reserve} reserve in every run")]
     for i, (num, head_text, body) in enumerate(steps):
         x = 0.6 + i * 3.1
         circle = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(1.9), Inches(0.8), Inches(0.8))
@@ -168,7 +183,9 @@ def main() -> None:
         text(sl, x, 2.9, 2.8, 0.6, head_text, size=20, bold=True, font=HEAD)
         text(sl, x, 3.5, 2.8, 2.4, body, size=15)
     text(sl, 0.6, 6.0, 12.1, 0.7, "Every input number has a row and a source in the assumptions register. "
-                                  f"All {len(s)} runs pass the post-solve checks.", size=15, colour=MUTED)
+                                  f"All {len(s)} runs for 2030 and all "
+                                  f"{len(list(Path('results/pathway').glob('*.warnings.txt')))} pathway solves pass the "
+                                  "post-solve checks.", size=15, colour=MUTED)
     footer(sl)
     sl.notes_slide.notes_text_frame.text = (
         "Calibration matters because PyPSA-Earth's open plant list overstated combined-cycle capacity and missed "
@@ -178,6 +195,7 @@ def main() -> None:
     sl = deck.slides.add_slide(blank)
     s0_ocgt = s.loc["S0", "new_cap_OCGT_mw"]
     title(sl, f"A {cuts[0]:.0%} saving removes the need for new gas plant")
+    tag(sl)
     picture(sl, "1_capacity_mix", 0.4, 1.5, 8.6)
     card(sl, 9.3, 1.6, 3.5, 4.6)
     stat(sl, 9.5, 1.8, 3.1, f"{s0_ocgt:.0f} MW", "of new gas turbines in the base case, to keep a "
@@ -192,6 +210,7 @@ def main() -> None:
     # 5. Timing
     sl = deck.slides.add_slide(blank)
     title(sl, "Saving during air-conditioning hours is worth more")
+    tag(sl)
     h = picture(sl, "9_uniform_vs_cooling", 0.6, 1.4, 12.1)
     text(sl, 0.6, 1.5 + h, 12.1, 1.0,
          f"Only {s.loc['S1-15C', 'cooling_share']:.0%} of the 15% saving fits on the summer cooling load, yet it "
@@ -204,6 +223,7 @@ def main() -> None:
     # 6. Flexibility
     sl = deck.slides.add_slide(blank)
     title(sl, f"Shifting load by up to {reg['flex_max_hours']:.0f} hours adds to efficiency")
+    tag(sl)
     h = picture(sl, "7_dispatch_peak_week", 1.4, 1.4, 10.5)
     text(sl, 0.6, 1.5 + h, 12.1, 1.0,
          f"{reg['flex_cap_mw']:.0f} MW of shiftable load saves another {flex:.0f} M EUR and {flex_co2:.2f} Mt of CO2 "
@@ -216,6 +236,7 @@ def main() -> None:
     # 7. Gas price
     sl = deck.slides.add_slide(blank)
     title(sl, "The gas price decides what a saved MWh displaces")
+    tag(sl)
     h = picture(sl, "8_avoided_per_mwh", 1.1, 1.3, 11.0)
     text(sl, 0.6, 1.4 + h, 12.1, 1.0,
          f"Cheap gas: each MWh saved avoids {a.at['G-lo-S1-15', 'co2_t_per_mwh']:.2f} t of CO2. Expensive gas: "
@@ -230,18 +251,16 @@ def main() -> None:
         f"{', '.join(sorted(s.index[s.res_share < reg['re_target_2030'] + 1e-4]))}.")
 
     # 8. The 2027-2030 pathway at Tunisia's demonstrated building pace
-    ps = pd.read_csv("results/pathway_summary.csv").set_index(["scenario", "year"])
-    whole = pd.read_csv("results/pathway_avoided.csv").set_index(["scenario", "year"]).xs("2027-2030", level="year")
-    share = lambda sc: ps.loc[(sc, 2030), "res_share"]
+    gained = (share("S1-15") - share("S0")) * 100      # percentage points the 15% saving adds in 2030
+    missing = (reg["re_target_2030"] - share("S0")) * 100  # percentage points the target needs
     sl = deck.slides.add_slide(blank)
     title(sl, f"At Tunisia's real pace, {target} is out of reach")
     picture(sl, "10_pathway_res_share", 0.4, 1.5, 8.6)
     card(sl, 9.3, 1.6, 3.5, 4.6)
     stat(sl, 9.5, 1.8, 3.1, f"{share('S0'):.0%}", f"renewables in 2030 without extra saving; {share('S1-15'):.0%} "
                                                  "when saving 15%")
-    text(sl, 9.5, 3.9, 3.1, 2.2, f"Each MWh saved over 2027-2030 avoids {whole.at['S1-15', 'co2_t_per_mwh']:.2f} t "
-                                 f"of CO2 and {whole.at['S1-15', 'cost_eur_per_mwh']:.0f} EUR: it comes off a gas plant.",
-         size=15)
+    text(sl, 9.5, 3.9, 3.1, 2.2, f"Saving 15% adds {gained:.1f} percentage points; the target needs {missing:.1f}. "
+                                 "The same panels cover a larger part of a smaller demand.", size=15)
     footer(sl)
     sl.notes_slide.notes_text_frame.text = (
         "Each year from 2027 starts from the year before; committed projects arrive in their year; new solar is "

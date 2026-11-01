@@ -6,7 +6,7 @@ Everything the pipeline produces. The solved networks themselves (`networks/*.nc
 |---|---|
 | [`summary.csv`](summary.csv) | One row per scenario: capacity and new capacity by technology (MW), generation (TWh), demand, gas burnt, CO2, renewable share, system cost, average price |
 | [`avoided.csv`](avoided.csv) | Each scenario against its reference: avoided cost, CO2, gas and capacity per MWh saved (the headline metric) |
-| [`pathway_summary.csv`](pathway_summary.csv) | The 2027-2030 pathway: one row per scenario and year (2025-2026 history included), with the renewable share and its gap to the target |
+| [`pathway_summary.csv`](pathway_summary.csv) | The 2027-2030 pathway: one row per scenario and year, 2027-2030, with the renewable share and its gap to the target |
 | [`pathway_avoided.csv`](pathway_avoided.csv) | The pathway's avoided cost, CO2, gas and capacity per MWh saved, per year and over 2027-2030 |
 | [`saving_cost.csv`](saving_cost.csv) | What efficient air conditioners cost per MWh saved, against what the MWh is worth to the system and to the owner |
 | [`validation.csv`](validation.csv) | The 2024 check: model against official statistics, before and after calibration |
