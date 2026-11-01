@@ -352,6 +352,13 @@ def main() -> None:
     table(doc, ["Input", "Value", "Unit", "Type", "Source"],
           [[r.id, f"{r.value:,.0f}" if abs(r.value) >= 1000 else f"{r.value:.4g}", r.unit, r.type, "" if pd.isna(r.source_title) else r.source_title]
            for r in rows.itertuples()], widths_cm=[4.2, 1.8, 2.0, 1.8, 6.6])
+    para(doc, "The study is built on these open-source tools:", bold_lead="Modelling tools.")
+    bullets(doc, [
+        "T. Brown, J. Hörsch, D. Schlachtberger, \"PyPSA: Python for Power System Analysis\", Journal of Open "
+        "Research Software 6(1), 4 (2018). doi:10.5334/jors.188",
+        "M. Parzen et al., \"PyPSA-Earth. A new global open energy system optimization model demonstrated in "
+        "Africa\", Applied Energy 341, 121096 (2023). doi:10.1016/j.apenergy.2023.121096",
+    ])
 
     doc.add_heading("6. Reproducing the study", level=1)
     para(doc, "The code, tests, scenario files and step-by-step instructions are in the repository README. One "

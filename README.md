@@ -2,7 +2,7 @@
 
 ### Energy efficiency and demand flexibility in Tunisia's 2030 power system, modelled hour by hour with PyPSA-Earth
 
-[![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey.svg)](LICENSE-docs.md) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg) ![Model: PyPSA-Earth](https://img.shields.io/badge/model-PyPSA--Earth%20v0.10.0-green.svg)
+[![Tests](https://github.com/RayenRomdhani/TEP30-35/actions/workflows/tests.yml/badge.svg)](https://github.com/RayenRomdhani/TEP30-35/actions/workflows/tests.yml) [![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey.svg)](LICENSE-docs.md) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg) ![Model: PyPSA-Earth](https://img.shields.io/badge/model-PyPSA--Earth%20v0.10.0-green.svg)
 
 *By Rayen Romdhani, energy engineering student at ENIM (Monastir, Tunisia).*
 
@@ -14,25 +14,13 @@ Everyone talks about building more solar. I wanted to know what happens on the o
 
 > **If Tunisia uses one MWh less in 2030, what does its power system no longer have to buy, burn or build?**
 
-So I built a model of the whole Tunisian power system, ran 2030 eleven different ways, and measured the difference. Then, because no country builds its 2030 power system in one go, I ran the four years from 2027 to 2030 one after the other, building no faster than Tunisia has managed so far.
+So I built a model of the whole Tunisian power system and ran the four years from 2027 to 2030 one after the other, with and without saving, building no faster than Tunisia has managed so far. I also ran 2030 on its own with no limit on building, to see what least cost alone would do.
 
-![Every MWh Tunisia does not use in 2030 saves 60 EUR, 0.91 MWh of gas, 0.18 t of CO2 and 449 MW of new capacity per TWh saved](results/figures/0_headline.png)
+![Every MWh Tunisia saves from 2027 to 2030 avoids 70 EUR of system cost, 1.95 MWh of gas and 0.39 t of CO2; the whole saving makes 423 MW of new gas plants unnecessary](results/figures/0_headline_pathway.png)
 
-## Four things the model found
+## What the model found, at the pace Tunisia actually builds
 
-**1. A 10% saving cancels a gas plant.** To keep a safe margin above the 2030 peak, the base case needs **423 MW of new gas turbines**. Save 10% in every hour and the model builds none of them.
-
-**2. Timing changes what a saved MWh is worth.** Take the same 15% of energy out of summer air conditioning first, and each saved MWh avoids **20% more gas and CO2** than an even cut.
-
-**3. Moving demand by three hours has real value.** Let 300 MW of demand shift a few hours into the midday sun, and the system saves another **22 M EUR a year** and **0.24 Mt of CO2**, on top of the 15% saving. (That is a gross value: shifting is free in the model, so the cost of making it happen is not counted.)
-
-**4. The gas price decides what a saved MWh replaces.** With cheap gas, a saved MWh mostly displaces gas (**0.28 t of CO2** avoided). With expensive gas, the system is already 70% renewable, so it mostly displaces solar, wind and batteries (**0.11 t**, but more money).
-
-And a plot twist: with 2030 cost projections, the cheapest 2030 system reaches **56% renewables** without being forced to. The 35% target binds only in the half-price gas case.
-
-## At the pace Tunisia actually builds
-
-The findings above come from 2030 on its own, where the model may build whatever is cheapest: about 6 GW of new solar and wind in one step. The pathway runs 2027, 2028, 2029 and 2030 in sequence instead. Each year keeps what was built before, the committed projects switch on in the year they are due, and new building is capped at Tunisia's demonstrated pace: **268 MW of solar a year** (its best year so far, 2024), **no new wind before 2029**, then 75 MW a year, and **batteries only from 2029** (the 150 MW Bazma tender). Every limit is a [register](data/assumptions_register.md) row with the facts behind it.
+The model runs 2027, 2028, 2029 and 2030 in sequence. Each year keeps what was built before, the committed projects switch on in the year they are due, and new building is capped at Tunisia's demonstrated pace: **268 MW of solar a year** (its best year so far, 2024), **no new wind before 2029**, then 75 MW a year, and **batteries only from 2029** (the 150 MW Bazma tender). Every limit is a [register](data/assumptions_register.md) row with the facts behind it.
 
 ![Renewable share year by year: 22% in 2030 without extra saving, 27% when saving 15%, 29% when saving 20%, against a 35% target](results/figures/10_pathway_res_share.png)
 
@@ -54,6 +42,30 @@ The model treats the saving itself as free. The one Tunisian measure with a publ
 - **It covers only part of the saving.** A standard would save 9% (EU level) to 25% (best available) of what the 15% cooling-first scenario saves in 2030. Lighting, buildings and industry have no Tunisian price per kWh saved that I could source.
 
 Method, sources and limits: [Phase 7](docs/project-history/phase7-saving-cost.md).
+
+## If Tunisia could build without limit: 2030 on its own
+
+Before the pathway, the study solved 2030 in one step, letting the model build whatever is cheapest: about 6 GW of new solar and wind at once. That is not what Tunisia can do, but it shows what least cost alone would choose, and it is where the learning path starts.
+
+![In 2030 on its own, every MWh saved avoids 60 EUR, 0.91 MWh of gas, 0.18 t of CO2 and 449 MW of new capacity per TWh saved](results/figures/0_headline.png)
+
+1. **A 10% saving cancels a gas plant.** To keep a safe margin above the 2030 peak, the base case needs **423 MW of new gas turbines**. Save 10% in every hour and the model builds none of them. *(Holds on the pathway.)*
+2. **Timing changes what a saved MWh is worth.** Take the same 15% of energy out of summer air conditioning first, and each saved MWh avoids **20% more gas and CO2** than an even cut. *(On the pathway, only about 1% more.)*
+3. **Moving demand by three hours has real value.** Let 300 MW of demand shift a few hours into the midday sun, and the system saves another **22 M EUR a year** and **0.24 Mt of CO2**, on top of the 15% saving. This is a gross value: shifting is free in the model. *(On the pathway, 6.9 M EUR in 2030: there is less midday solar to shift into.)*
+4. **The gas price decides what a saved MWh replaces.** With cheap gas, a saved MWh mostly displaces gas (**0.28 t of CO2** avoided). With expensive gas, the system is already 70% renewable, so it mostly displaces solar, wind and batteries (**0.11 t**, but more money). *(On the pathway, a saved MWh displaces gas at every gas price.)*
+
+With 2030 cost projections and no build limit, the cheapest 2030 system would reach **56% renewables** without being forced to. The gap between that and the pathway's 22% is the gap between what is cheapest and what can be built in time.
+
+## How this study fits with other work
+
+The model is [PyPSA-Earth](https://github.com/pypsa-meets-earth/pypsa-earth) (Parzen et al., 2023), built on [PyPSA](https://github.com/PyPSA/PyPSA) (Brown, Hörsch and Schlachtberger, 2018). Other country studies built on PyPSA-Earth include:
+
+- **Nigeria:** the model's own paper reproduces 2020 and plans a net-zero 2060 ([Parzen et al., 2023](https://doi.org/10.1016/j.apenergy.2023.121096)).
+- **Côte d'Ivoire:** 14 nodes, 2030 to 2050, three policy scenarios ([Toukam et al., 2026](https://doi.org/10.54337/ijsepm.11265)).
+- **Kazakhstan:** whether going past the official 2030 renewable target is affordable (Agora Energiewende with Open Energy Transition, listed among [PyPSA-Earth's applications](https://pypsa-earth.readthedocs.io/en/latest/community/users-list/)).
+- **Saudi Arabia:** a 2030 model and two net-zero 2060 models, on the same 2013 weather year ([Edinburgh MSc dissertation, 2022](https://drepo.sdl.edu.sa/items/e42757df-f12b-44a7-b3d8-69e8dcc25dff)).
+
+For Tunisia, the Reiner Lemoine Institut ran [PyPSA training workshops for Tunisian stakeholders](https://reiner-lemoine-institut.de/en/project/tunisia-modelling-strengthening-energy-system-modelling-in-tunisia/) in Tunis, Monastir and Sfax in 2024-2025; I found no published PyPSA study of Tunisia's grid. What this study adds: a value per MWh saved, a pathway held to the country's real building pace, the cost of one real saving measure, and a source for every input.
 
 ## What this study is not
 
@@ -113,7 +125,6 @@ No number in this study is made up. Every input is a row in the [assumptions reg
 | [`tests/`](tests/) | Automated tests |
 | [`report/`](report/) | Report and slides |
 | [`site/`](site/) | The interactive web page (a scroll story with 3D scenes), fed by `scripts/export_site_data.py` |
-| [`skill/`](skill/) | `pypsa-country-study`: the method and its pitfalls, packaged for a study of another country |
 | [`docs/project-history/`](docs/project-history/) | The lab notebook: how the study was built, phase by phase |
 
 ## Run it yourself
@@ -155,3 +166,8 @@ The 117 tests cover 98% of the study's code (`pytest --cov=tn2030 --cov-branch`)
 ## Licence and citation
 
 Code under the [MIT licence](LICENSE); text, figures, report and slides under [CC BY 4.0](LICENSE-docs.md). To cite this work, use [`CITATION.cff`](CITATION.cff) (GitHub shows a "Cite this repository" button).
+
+The study is built on these tools; please cite them too:
+
+- T. Brown, J. Hörsch, D. Schlachtberger, "PyPSA: Python for Power System Analysis", *Journal of Open Research Software* 6(1), 4 (2018). [doi:10.5334/jors.188](https://doi.org/10.5334/jors.188)
+- M. Parzen et al., "PyPSA-Earth. A new global open energy system optimization model demonstrated in Africa", *Applied Energy* 341, 121096 (2023). [doi:10.1016/j.apenergy.2023.121096](https://doi.org/10.1016/j.apenergy.2023.121096)

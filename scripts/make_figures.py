@@ -1,7 +1,8 @@
 """Draw the result figures from results/*.csv and the solved networks (plan Task 17).
 
 Run from the repo root after `snakemake -j 1`:  python scripts/make_figures.py
-Writes 14 PNGs to results/figures/ (0_headline.png is the README's opening picture; 10-13 need the pathway results).
+Writes 15 PNGs to results/figures/ (0_headline_pathway.png is the README's opening picture; it and 10-13 need the
+pathway results).
 """
 
 import sys
@@ -188,6 +189,31 @@ def headline(avoided_df: pd.DataFrame) -> None:
     save(fig, "0_headline")
 
 
+def headline_pathway(pa: pd.DataFrame, ps: pd.DataFrame) -> None:
+    """The realistic answer in one picture: the 2027-2030 pathway (S1-15 against S0), as four big numbers."""
+    a = pa[(pa.scenario == "S1-15") & (pa.year == "2027-2030")].iloc[0]
+    ccgt = lambda s, y: ps[(ps.scenario == s) & (ps.year == y)].cap_CCGT_mw.item()
+    gas_plants = ccgt("S0", 2030) - ccgt("S0", 2027)  # what the base case adds; the saving scenarios add none
+    assert ccgt("S1-15", 2030) - ccgt("S1-15", 2027) < 0.5, "S1-15 builds combined cycles: rewrite the tile"
+    tiles = [(f"{a['cost_eur_per_mwh']:.0f} EUR", "of power-system cost"),
+             (f"{a['gas_mwh_th_per_mwh']:.2f} MWh", "of gas not burnt"),
+             (f"{a['co2_t_per_mwh']:.2f} t", "of CO2 not emitted"),
+             (f"{gas_plants:.0f} MW", "of new gas plants not\nneeded (whole saving)")]
+    fig = plt.figure(figsize=(12, 4), facecolor="white")
+    fig.text(0.03, 0.88, "Every MWh Tunisia saves from 2027 to 2030 avoids", fontsize=18, color=INK, weight="bold")
+    fig.text(0.03, 0.79, "Built year by year at Tunisia's real pace; saving 15% by 2030 (S1-15) against no extra "
+                         "saving (S0)", fontsize=11, color=INK_2)
+    for i, (value, label) in enumerate(tiles):
+        x = 0.03 + i * 0.24
+        fig.patches.append(matplotlib.patches.FancyBboxPatch(
+            (x, 0.14), 0.215, 0.56, boxstyle="round,pad=0,rounding_size=0.02", transform=fig.transFigure,
+            facecolor="#eef3f4", edgecolor="none"))
+        fig.text(x + 0.02, 0.48, value, fontsize=32, color=SINGLE, weight="bold")
+        fig.text(x + 0.02, 0.36, label, fontsize=12, color=INK, va="top")
+    add_source(fig, SOURCE + "; numbers from results/pathway_avoided.csv and pathway_summary.csv")
+    save(fig, "0_headline_pathway")
+
+
 def uniform_vs_cooling(avoided_df: pd.DataFrame) -> None:
     """The same 15% of energy saved evenly (S1-15) or from summer cooling first (S1-15C)."""
     fig, axes = plt.subplots(1, 4, figsize=(12, 4), facecolor="white")
@@ -312,6 +338,7 @@ def main() -> None:
         ps, pa = pd.read_csv(RESULTS / "pathway_summary.csv"), pd.read_csv(RESULTS / "pathway_avoided.csv")
         history = pd.DataFrame([{"year": y, "res_share": res_share(pypsa.Network(str(RESULTS / "pathway" / f"history_{y}_solved.nc")))}
                                 for y in (2025, 2026)])
+        headline_pathway(pa.astype({"year": str}), ps)
         pathway_share(ps, history, reg["re_target_2030"])
         pathway_capacity(ps)
         pathway_avoided(pa, avoided_df)

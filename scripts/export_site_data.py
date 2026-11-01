@@ -170,7 +170,7 @@ def main() -> None:
     write("peakweek.json", peak_week(networks))
     write("grid.json", grid(networks["S0"]))
     (ROOT / "site" / "assets").mkdir(exist_ok=True)  # social-preview image
-    shutil.copyfile(RESULTS / "figures" / "0_headline.png", ROOT / "site" / "assets" / "headline.png")
+    shutil.copyfile(RESULTS / "figures" / "0_headline_pathway.png", ROOT / "site" / "assets" / "headline.png")
 
 
 if __name__ == "__main__":
