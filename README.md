@@ -4,7 +4,7 @@
 
 [![Tests](https://github.com/RayenRomdhani/tunisia-saved-mwh/actions/workflows/tests.yml/badge.svg)](https://github.com/RayenRomdhani/tunisia-saved-mwh/actions/workflows/tests.yml) [![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey.svg)](LICENSE-docs.md) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg) ![Model: PyPSA-Earth](https://img.shields.io/badge/model-PyPSA--Earth%20v0.10.0-green.svg)
 
-*By Rayen Romdhani, energy engineering student at ENIM (Monastir, Tunisia).*
+*By Rayen Romdhani, energy engineering student at ENIM (Monastir, Tunisia).* **[Explore the interactive site](https://rayenromdhani.github.io/tunisia-saved-mwh/)** · [Read the report (PDF)](report/report.pdf)
 
 ---
 
@@ -106,7 +106,7 @@ New to power systems? The learning path explains everything from scratch, one sh
 | 7 | [Try it yourself](docs/learn/07-try-it-yourself.md) | Run the model, add your own scenario |
 | | [Glossary](docs/learn/glossary.md) | Every term in one or two lines |
 
-Prefer a document? There is a [written report](report/report.pdf) and a [10-slide deck](report/deck.pdf) (editable versions: [report.docx](report/report.docx), [deck.pptx](report/deck.pptx)). Prefer to explore? The [interactive site](site/) tells the study through one summer day: scroll moves the clock across a 3D landscape whose sun, solar field, turbines and gas plant follow the model's real hourly output, then on to the answer, a "choose how Tunisia saves" panel, the four years to 2030 and the limits (see [`site/README.md`](site/README.md) to run it locally).
+Prefer a document? There is a [written report](report/report.pdf) and a [10-slide deck](report/deck.pdf) (editable versions: [report.docx](report/report.docx), [deck.pptx](report/deck.pptx)). Prefer to explore? The [interactive site](https://rayenromdhani.github.io/tunisia-saved-mwh/) tells the study through one summer day: scroll moves the clock across a 3D landscape whose sun, solar field, turbines and gas plant follow the model's real hourly output, then on to the answer, a "choose how Tunisia saves" panel, the four years to 2030 and the limits (see [`site/README.md`](site/README.md) to run it locally).
 
 ## Where the numbers come from
 
