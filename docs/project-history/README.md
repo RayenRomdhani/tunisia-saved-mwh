@@ -10,7 +10,7 @@ The study was built in seven phases, each ending with evidence before the next o
 | 2 | PyPSA-Earth installed on Windows and the 2-node Tunisia network built | [phase2-base-network.md](phase2-base-network.md) |
 | 3 | The network checked against official 2024 statistics and calibrated | [phase3-validation.md](phase3-validation.md) |
 | 4 | The 11 scenarios built, solved and checked | [phase4-scenarios.md](phase4-scenarios.md) |
-| 5 | Figures, report, slides and the reusable skill | (this repository's README and `report/`) |
+| 5 | Figures, report, slides and a reusable write-up of the method (since moved out of this repository) | (this repository's README and `report/`) |
 | 6 | The 2027-2030 pathway: the same scenarios year by year, built at Tunisia's demonstrated pace | [phase6-pathway.md](phase6-pathway.md) |
 | 7 | What saving costs: efficient air conditioners priced per MWh saved, against what the MWh avoids | [phase7-saving-cost.md](phase7-saving-cost.md) |
 

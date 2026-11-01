@@ -5,7 +5,8 @@ authors:
   - family-names: Romdhani
     given-names: Rayen
     affiliation: "École Nationale d'Ingénieurs de Monastir (ENIM)"
-date-released: 2026-10-28
+version: 1.0.0
+date-released: 2026-11-01
 repository-code: "https://github.com/RayenRomdhani/TEP30-35"
 license:
   - MIT
@@ -17,3 +18,51 @@ keywords:
   - capacity expansion
   - PyPSA-Earth
   - Tunisia
+references:
+  - type: article
+    title: "PyPSA: Python for Power System Analysis"
+    authors:
+      - family-names: Brown
+        given-names: Thomas
+      - family-names: Hörsch
+        given-names: Jonas
+      - family-names: Schlachtberger
+        given-names: David
+    journal: "Journal of Open Research Software"
+    volume: 6
+    issue: 1
+    start: 4
+    year: 2018
+    doi: 10.5334/jors.188
+  - type: article
+    title: "PyPSA-Earth. A new global open energy system optimization model demonstrated in Africa"
+    authors:
+      - family-names: Parzen
+        given-names: Maximilian
+      - family-names: Abdel-Khalek
+        given-names: Hazem
+      - family-names: Fedotova
+        given-names: Ekaterina
+      - family-names: Mahmood
+        given-names: Matin
+      - family-names: Frysztacki
+        given-names: Martha Maria
+      - family-names: Hampp
+        given-names: Johannes
+      - family-names: Franken
+        given-names: Lukas
+      - family-names: Schumm
+        given-names: Leon
+      - family-names: Neumann
+        given-names: Fabian
+      - family-names: Poli
+        given-names: Davide
+      - family-names: Kiprakis
+        given-names: Aristides
+      - family-names: Fioriti
+        given-names: Davide
+    journal: "Applied Energy"
+    volume: 341
+    start: 121096
+    year: 2023
+    doi: 10.1016/j.apenergy.2023.121096
