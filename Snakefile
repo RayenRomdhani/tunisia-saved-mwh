@@ -27,6 +27,20 @@ rule all:
         "results/avoided.csv",
         "results/pathway_summary.csv",
         "results/pathway_avoided.csv",
+        "results/saving_cost.csv",
+
+
+# ---------- what saving a MWh costs (efficient ACs), against what it avoids ----------
+
+rule saving_cost:
+    input:
+        register=REGISTER,
+        summary="results/pathway_summary.csv",
+        avoided="results/pathway_avoided.csv",
+    output:
+        "results/saving_cost.csv",
+    run:
+        pipeline.saving_cost_step(Path(input.register), Path(input.summary), Path(input.avoided), Path(output[0]))
 
 
 # ---------- the 2027-2030 pathway: each year starts from the year before ----------

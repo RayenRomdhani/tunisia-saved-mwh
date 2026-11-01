@@ -93,6 +93,9 @@ def main() -> None:
     pa = pd.read_csv(RESULTS / "pathway_avoided.csv").set_index(["scenario", "year"])
     whole = pa.xs("2027-2030", level="year")
     share = lambda sc: ps.loc[(sc, 2030), "res_share"]
+    sc = pd.read_csv(RESULTS / "saving_cost.csv", index_col=0)  # efficient ACs: cost per MWh saved
+    # The text below says the EU-level standard pays for the system; stop if a re-run changes that.
+    assert sc.loc[["cool_eu", "rev_eu"], "pays_for_system"].all(), "rewrite the saving-cost text"
     # The findings text says a 10% saving avoids all new gas turbines; stop if a re-run changes that.
     assert s.loc["S1-10", "new_cap_OCGT_mw"] < 0.5, "S1-10 builds new OCGT: rewrite the findings text"
 
@@ -112,7 +115,8 @@ def main() -> None:
     doc.add_heading(TITLE, level=0)
     para(doc, f"{AUTHOR}, Energy Engineering, ENIM (Monastir, Tunisia). October 2026.")
     para(doc, "Model: PyPSA-Earth v0.10.0 with the study code in this repository. All result numbers come from "
-              "results/summary.csv, results/avoided.csv, results/pathway_*.csv and results/validation.csv; all inputs come from "
+              "results/summary.csv, results/avoided.csv, results/pathway_*.csv, results/saving_cost.csv and "
+              "results/validation.csv; all inputs come from "
               "data/assumptions_register.xlsx.", size=9)
 
     doc.add_heading("Summary", level=1)
@@ -137,6 +141,9 @@ def main() -> None:
         f"Built year by year at Tunisia's demonstrated pace (2027-2030 pathway), renewables reach only "
         f"{share('S0'):.0%} in 2030 ({share('S1-15'):.0%} with the 15% saving), and each MWh saved avoids "
         f"{whole.at['S1-15', 'co2_t_per_mwh']:.2f} t of CO2 and {whole.at['S1-15', 'cost_eur_per_mwh']:.0f} EUR.",
+        f"Saving is not free: a more efficient air conditioner costs {sc.cost_eur_per_mwh.min():.0f}-"
+        f"{sc.cost_eur_per_mwh.max():.0f} EUR per MWh saved, against {sc.value_eur_per_mwh.iloc[0]:.0f} EUR avoided "
+        "at the meter. Raising the standard to the EU's 2014 level pays for the power system.",
     ])
 
     doc.add_heading("1. Question and scope", level=1)
@@ -289,6 +296,36 @@ def main() -> None:
     figure(doc, "12_pathway_avoided", "Figure 8. What each MWh saved avoids, year by year (S1-15 vs S0), against "
                                       "the unconstrained 2030 run (dashed).")
 
+    doc.add_heading("3.5 What saving costs: efficient air conditioners", level=2)
+    para(doc, "The model treats saving as free. The one Tunisian measure with a published cost per kWh saved is the "
+              "split air conditioner (LBNL, Cost-Benefit Analysis for Air Conditioner in Tunisia, 2023): prices and "
+              "yearly electricity use at each efficiency level, against today's market average. The extra price is "
+              f"spread over the unit's {reg['ac_lifetime_years']:g}-year life at the model's {reg['discount_rate']:.1%} "
+              "discount rate and divided by the kWh saved each year, then converted at "
+              f"{reg['usd_per_eur_2021']:.4f} US$ per EUR (2021). It is compared with the value of a cooling-first MWh "
+              f"saved on the pathway (S1-15C, 2027-2030), raised by the {reg['grid_losses']:.0%} grid losses because the "
+              "AC saves at the meter, and with the STEG tariff the owner stops paying.")
+    table(doc, ["Measure (vs today's market average)", "Extra price (US$)", "kWh saved a year",
+                "Cost (EUR/MWh)", "Net for the system (EUR/MWh)"],
+          [[row.measure, f"{row.extra_price_usd:.0f}", f"{row.kwh_saved_per_year:.0f}",
+            f"{row.cost_eur_per_mwh:.0f}", f"{row.net_eur_per_mwh:+.0f}"] for row in sc.itertuples()],
+          widths_cm=[6, 2.5, 2.5, 2.5, 3])
+    bullets(doc, [
+        f"A saved MWh is worth {sc.value_eur_per_mwh.iloc[0]:.0f} EUR to the power system at the meter "
+        f"({whole.at['S1-15C', 'cost_eur_per_mwh']:.0f} EUR at the plants) and "
+        f"{sc.tariff_eur_per_mwh.iloc[0]:.0f} EUR to the owner.",
+        f"Raising the minimum standard to the EU's 2014 level costs {sc.at['rev_eu', 'cost_eur_per_mwh']:.0f}-"
+        f"{sc.at['cool_eu', 'cost_eur_per_mwh']:.0f} EUR per MWh saved: it pays for the power system.",
+        f"The best available units cost {sc.at['rev_best', 'cost_eur_per_mwh']:.0f}-"
+        f"{sc.at['cool_best', 'cost_eur_per_mwh']:.0f} EUR per MWh: close to break-even for the system, and every "
+        "level pays for the owner.",
+        f"A standard would deliver {sc.at['cool_eu', 'standard_share_of_saving']:.0%} (EU level) to "
+        f"{sc.at['cool_best', 'standard_share_of_saving']:.0%} (best available) of the S1-15C saving in 2030; the "
+        "other measures have no sourced Tunisian cost per kWh.",
+    ])
+    figure(doc, "13_saving_cost", "Figure 9. Cost per MWh saved by more efficient air conditioners, against what "
+                                  "the MWh is worth to the power system and to the owner.")
+
     doc.add_heading("4. Limitations", level=1)
     bullets(doc, [
         "In the 2030 runs nothing limits how fast renewables are built: the base case adds "
@@ -296,7 +333,8 @@ def main() -> None:
         "far above Tunisia's recent pace. The pathway (section 3.4) caps building; its caps are judgements based on "
         "past pace, and it assumes committed projects arrive on time.",
         "The cost of efficiency programmes is not modelled. The avoided cost per MWh is the most a programme could "
-        "cost and still pay off for the power system.",
+        "cost and still pay off for the power system. Section 3.5 prices one measure (air-conditioner standards, "
+        "equipment cost only); the cost of the whole saving is unknown.",
         "One weather year (2013) at 1-hour steps. A 3-hour test run built 2.7% more solar and 3.9% more wind "
         "(resolution benchmark in docs/project-history/phase2-base-network.md).",
         "Demand growth and the 2030 peak come from STEG's forecast as quoted by JICA (2022), a secondary source.",

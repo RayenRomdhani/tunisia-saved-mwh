@@ -248,21 +248,39 @@ def main() -> None:
         f"capped at {reg['pathway_solar_extra_mw_per_year']:.0f} MW a year (Tunisia's best year, 2024), new wind "
         f"starts in {reg['pathway_wind_first_year']:.0f} and batteries in {reg['pathway_battery_first_year']:.0f}.")
 
-    # 9. Limits and next steps
+    # 9. What saving costs: efficient air conditioners (LBNL 2023) against what the saved MWh avoids
+    sc = pd.read_csv("results/saving_cost.csv", index_col=0)
+    sl = deck.slides.add_slide(blank)
+    title(sl, "A stricter air-conditioner standard saves for less than it avoids")
+    picture(sl, "13_saving_cost", 0.4, 1.5, 8.6)
+    card(sl, 9.3, 1.6, 3.5, 4.6)
+    stat(sl, 9.5, 1.8, 3.1, f"{sc.at['rev_eu', 'cost_eur_per_mwh']:.0f}-{sc.at['cool_eu', 'cost_eur_per_mwh']:.0f} EUR",
+         f"per MWh saved at the EU 2014 level, against {sc.value_eur_per_mwh.iloc[0]:.0f} EUR avoided")
+    text(sl, 9.5, 3.9, 3.1, 2.2, f"It covers {sc.at['cool_eu', 'standard_share_of_saving']:.0%}-"
+                                 f"{sc.at['cool_best', 'standard_share_of_saving']:.0%} of the 15% saving; the other "
+                                 "measures are not priced yet.", size=15)
+    footer(sl)
+    sl.notes_slide.notes_text_frame.text = (
+        "Prices and yearly kWh from LBNL, Cost-Benefit Analysis for Air Conditioner in Tunisia (2023). The extra "
+        f"price is spread over {reg['ac_lifetime_years']:g} years at {reg['discount_rate']:.1%}. The value is the "
+        f"cooling-first saving on the pathway plus {reg['grid_losses']:.0%} grid losses; the owner's tariff is "
+        f"{sc.tariff_eur_per_mwh.iloc[0]:.0f} EUR per MWh, so every level pays for the owner.")
+
+    # 10. Limits and next steps
     sl = deck.slides.add_slide(blank)
     background(sl, DARK)
     title(sl, "What the numbers mean, and what comes next", colour=WHITE)
     text(sl, 0.6, 1.6, 5.8, 0.5, "Read with care", size=20, colour=SUN, bold=True, font=HEAD)
     text(sl, 0.6, 2.2, 5.8, 4.4, [
         "Not a forecast: 2030 alone has no build limit; the pathway's limits are judgements",
-        "Programme costs not modelled: the avoided cost is a ceiling on what a programme may cost",
+        "Only air-conditioner standards are priced: the cost of the whole saving is unknown",
         "One weather year; imports flat at their 2024 level",
         "Demand growth from STEG's forecast as quoted by JICA (2022)"], size=15, colour=WHITE)
     text(sl, 7.0, 1.6, 5.7, 0.5, "Next steps", size=20, colour=SUN, bold=True, font=HEAD)
     text(sl, 7.0, 2.2, 5.7, 4.4, [
         "Add the ELMED link to Italy as a scenario",
         "Test faster build rates as the 2 GW wind tenders progress",
-        "Compare the avoided cost with the cost of real efficiency programmes"], size=15, colour=WHITE)
+        "Price lighting, building and industry savings in Tunisia"], size=15, colour=WHITE)
     footer(sl, colour="B8C4C7")
     sl.notes_slide.notes_text_frame.text = "Code, data sources and full results are in the GitHub repository."
 

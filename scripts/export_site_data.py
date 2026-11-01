@@ -143,7 +143,11 @@ def pathway(reg: dict) -> dict:
     committed = pd.read_csv(ROOT / "data" / "committed_projects.csv")
     committed["cod_expected"] = pd.to_numeric(committed.cod_expected, errors="coerce")
     by_year = committed[committed.carrier.isin(["solar", "onwind"])].groupby("cod_expected").p_nom_mw.sum()
+    cost_file = RESULTS / "saving_cost.csv"  # efficient ACs: what a MWh saved costs, against what it avoids
+    saving_cost = (pd.read_csv(cost_file, index_col=0).rename_axis("id").reset_index().round(4)
+                   .to_dict(orient="records") if cost_file.exists() else [])
     return {"target": reg["re_target_2030"],
+            "saving_cost": saving_cost,
             "committed": {int(y): float(mw) for y, mw in by_year.items()},
             "history": [keep(h) for h in history],
             "scenarios": {s: [keep(r) for _, r in summary[summary.scenario == s].sort_values("year").iterrows()]

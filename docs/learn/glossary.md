@@ -22,6 +22,8 @@
 
 **Cooling load.** In this study: summer demand above the average spring and autumn demand for the same hour of the day. A simple way to estimate air conditioning without extra data.
 
+**Cost of saved energy.** What it costs to save one kWh: the extra price of the efficient equipment, spread over its life like a loan (the same annuity as for plants), divided by the kWh it saves each year. Compare it with what the saved kWh is worth.
+
 **Demand flexibility (load shifting).** Using electricity earlier or later than planned, without using less over the day.
 
 **Dispatch.** How much each plant produces in each hour.
@@ -32,7 +34,11 @@
 
 **Energy (MWh, TWh).** Power times time. 1 TWh = 1,000,000 MWh.
 
+**EU 2014 standard (for air conditioners).** The minimum efficiency the EU's Ecodesign rules set for split ACs in 2014 (seasonal efficiency of 4.6 for cooling). LBNL used it as the first candidate for a stricter Tunisian standard.
+
 **Firm capacity.** Plants that can produce whenever needed: here gas and hydro. Solar, wind and batteries get no firm credit in this study.
+
+**Grid losses.** Electricity lost in lines and transformers between the plant and the meter: 18% in Tunisia (STEG 2020, via LBNL). A MWh saved at the meter avoids about 1.22 MWh at the plants.
 
 **HiGHS.** The open-source solver that finds the cheapest answer to the model's linear program.
 

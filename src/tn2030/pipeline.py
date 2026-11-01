@@ -11,6 +11,7 @@ from tn2030.constraints import res_share, solve_network
 from tn2030.pathway import build_year, committed_in, limits_from_register, peak_reference
 from tn2030.register import load_register
 from tn2030.results import avoided_per_mwh, summarize
+from tn2030.saving_cost import ac_saving_costs, compare_with_value
 from tn2030.scenario import build_scenario, load_scenario
 
 
@@ -97,6 +98,27 @@ def pathway_summarize_step(solved: dict[tuple[str, int], Path], scenario_paths: 
                     "gas_mwh_th_per_mwh": saved["gas_use_twh_th"] / saved["demand_twh"],
                     "capacity_mw_per_twh": saved["new_cap_total_mw"] / saved_2030})
     pd.DataFrame(out).to_csv(avoided_out, index=False)
+
+
+def saving_cost_step(register_path: Path, pathway_summary: Path, pathway_avoided: Path, out_path: Path,
+                     scenario: str = "S1-15C", reference: str = "S0") -> None:
+    """Cost of saving a MWh with efficient ACs against the pathway's value of a saved MWh.
+
+    The value is the cooling-first saving's over 2027-2030, since an AC standard saves cooling electricity.
+    Each standard's 2030 saving (both AC types, at the meter) is also shown as a share of that scenario's saving.
+    """
+    r = load_register(register_path)
+    avoided = pd.read_csv(pathway_avoided, dtype={"year": str})
+    value = avoided.loc[(avoided.scenario == scenario) & (avoided.reference == reference)
+                        & (avoided.year == "2027-2030"), "cost_eur_per_mwh"].item()
+    s = pd.read_csv(pathway_summary).set_index(["scenario", "year"])
+    saved_2030_twh = s.at[(reference, 2030), "demand_twh"] - s.at[(scenario, 2030), "demand_twh"]
+
+    table = compare_with_value(ac_saving_costs(r), value, r)
+    level = table.index.str.split("_").str[1]  # "eu" or "best"
+    standard_twh = pd.Series([r[f"ac_saving_2030_{lv}_gwh"] / 1000 for lv in level], index=table.index)
+    table["standard_share_of_saving"] = standard_twh / (1 - r["grid_losses"]) / saved_2030_twh
+    table.to_csv(out_path)
 
 
 def summarize_step(solved_paths: list[Path], scenario_paths: list[Path], summary_out: Path, avoided_out: Path) -> None:
