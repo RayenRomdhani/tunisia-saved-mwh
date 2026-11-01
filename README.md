@@ -43,10 +43,22 @@ The findings above come from 2030 on its own, where the model may build whatever
 
 The full pathway write-up, with every year's numbers, is in [Phase 6](docs/project-history/phase6-pathway.md).
 
+## Is saving cheaper than what it avoids?
+
+The model treats the saving itself as free. The one Tunisian measure with a published price per kWh saved is the air conditioner: LBNL (2023) priced split units at every efficiency level, with what each uses a year in Tunisia. Spread over the unit's life at the model's discount rate, a better unit costs this much per MWh it saves:
+
+![Cost per MWh saved by more efficient air conditioners: 50 to 62 EUR at the EU standard, 77 to 92 EUR for the best units, against 86 EUR avoided and a 128 EUR tariff](results/figures/13_saving_cost.png)
+
+- **Raising Tunisia's AC standard to the EU's 2014 level pays.** It costs **50-62 EUR** per MWh saved; a cooling-first MWh saved is worth **86 EUR** at the meter on the pathway (71 EUR at the plants, plus 18% grid losses).
+- **The best units are close to break-even:** reversible ones still pay, cooling-only ones cost 6 EUR more than they avoid. Every level pays for the owner, who stops paying 128 EUR per MWh.
+- **It covers only part of the saving.** A standard would save 9% (EU level) to 25% (best available) of what the 15% cooling-first scenario saves in 2030. Lighting, buildings and industry have no Tunisian price per kWh saved that I could source.
+
+Method, sources and limits: [Phase 7](docs/project-history/phase7-saving-cost.md).
+
 ## What this study is not
 
 - **Not a forecast.** The 2030 runs show the least-cost system with no limit on how fast Tunisia can build; the pathway adds limits, but they are judgements based on its past pace, and they assume committed projects arrive on time.
-- **Not a cost-benefit analysis of programmes.** Saving and shifting are free in the model: the results are what they are worth to the power system, before the cost of achieving them.
+- **Not a full cost-benefit analysis of programmes.** Saving and shifting are free in the model: the results are what they are worth to the power system, before the cost of achieving them. Only air-conditioner standards are priced afterwards; the cost of the whole 15% saving is unknown.
 - **Not the whole grid.** Imports are fixed at 2024 levels, there are 2 nodes, and the model's daily peak comes about two hours later than the real one.
 
 All the limits, and which way each one pushes the results, are in [chapter 6](docs/learn/06-how-far-to-trust-it.md).
@@ -82,7 +94,7 @@ New to power systems? The learning path explains everything from scratch, one sh
 | 7 | [Try it yourself](docs/learn/07-try-it-yourself.md) | Run the model, add your own scenario |
 | | [Glossary](docs/learn/glossary.md) | Every term in one or two lines |
 
-Prefer a document? There is a [written report](report/report.docx) and a [9-slide deck](report/deck.pptx). Prefer to explore? The [interactive site](site/) tells the study through one summer day: scroll moves the clock across a 3D landscape whose sun, solar field, turbines and gas plant follow the model's real hourly output, then on to the answer, a "choose how Tunisia saves" panel, the four years to 2030 and the limits (see [`site/README.md`](site/README.md) to run it locally).
+Prefer a document? There is a [written report](report/report.docx) and a [10-slide deck](report/deck.pptx). Prefer to explore? The [interactive site](site/) tells the study through one summer day: scroll moves the clock across a 3D landscape whose sun, solar field, turbines and gas plant follow the model's real hourly output, then on to the answer, a "choose how Tunisia saves" panel, the four years to 2030 and the limits (see [`site/README.md`](site/README.md) to run it locally).
 
 ## Where the numbers come from
 
@@ -138,7 +150,7 @@ snakemake -j 1
 python scripts/make_figures.py
 ```
 
-The 112 tests cover 98% of the study's code (`pytest --cov=tn2030 --cov-branch`); those that need the real Tunisia network skip themselves if it is missing.
+The 117 tests cover 98% of the study's code (`pytest --cov=tn2030 --cov-branch`); those that need the real Tunisia network skip themselves if it is missing.
 
 ## Licence and citation
 

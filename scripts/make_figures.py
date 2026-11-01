@@ -1,7 +1,7 @@
 """Draw the result figures from results/*.csv and the solved networks (plan Task 17).
 
 Run from the repo root after `snakemake -j 1`:  python scripts/make_figures.py
-Writes 13 PNGs to results/figures/ (0_headline.png is the README's opening picture; 10-12 need the pathway results).
+Writes 14 PNGs to results/figures/ (0_headline.png is the README's opening picture; 10-13 need the pathway results).
 """
 
 import sys
@@ -264,6 +264,29 @@ def pathway_avoided(pa: pd.DataFrame, avoided_df: pd.DataFrame, scen: str = "S1-
     save(fig, "12_pathway_avoided")
 
 
+def saving_cost(sc: pd.DataFrame) -> None:
+    """What saving a MWh with an efficient AC costs, against what it is worth to the system and to the owner."""
+    d = sc.sort_values("cost_eur_per_mwh", ascending=False)
+    value, tariff = d.value_eur_per_mwh.iloc[0], d.tariff_eur_per_mwh.iloc[0]
+    fig, ax = new_figure(10, 4.2)
+    colours = [SINGLE if pays else LINE_COLOURS[1] for pays in d.pays_for_system]
+    ax.barh(range(len(d)), d.cost_eur_per_mwh, 0.55, color=colours)
+    for i, v in enumerate(d.cost_eur_per_mwh):
+        ax.text(v + 1.5, i, f"{v:.0f}", va="center", fontsize=9, color=INK)
+    ax.axvline(value, color=INK, linewidth=1.5)
+    ax.text(value - 1.5, len(d) - 0.45, f"Worth to the power system: {value:.0f}", ha="right", fontsize=8.5, color=INK)
+    ax.axvline(tariff, color=INK_2, linewidth=1.5, linestyle=(0, (5, 4)))
+    ax.text(tariff - 1.5, len(d) - 0.45, f"Owner's tariff: {tariff:.0f}", ha="right", fontsize=8.5, color=INK_2)
+    ax.set_yticks(range(len(d)), d.measure, fontsize=9)
+    ax.set_xlim(0, tariff * 1.08); ax.set_ylim(-0.6, len(d) - 0.1)
+    fig.subplots_adjust(left=0.25, bottom=0.2)
+    style_axis(ax, "Cost of each MWh saved by a more efficient air conditioner (vs today's market average)",
+               "EUR per MWh saved at the meter", grid="x")
+    add_source(fig, "Source: LBNL 2023 (prices and kWh per unit); value: own model, S1-15C 2027-2030 plus 18% grid losses; "
+                    "results/saving_cost.csv")
+    save(fig, "13_saving_cost")
+
+
 def main() -> None:
     FIGURES.mkdir(parents=True, exist_ok=True)
     reg = load_register(Path("data/assumptions_register.xlsx"))
@@ -292,6 +315,8 @@ def main() -> None:
         pathway_share(ps, history, reg["re_target_2030"])
         pathway_capacity(ps)
         pathway_avoided(pa, avoided_df)
+    if (RESULTS / "saving_cost.csv").exists():
+        saving_cost(pd.read_csv(RESULTS / "saving_cost.csv", index_col=0))
 
 
 if __name__ == "__main__":

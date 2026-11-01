@@ -87,6 +87,23 @@ Everything above is 2030 on its own, with no limit on building. Run the same sce
 
 **What it tells you:** the unconstrained runs undervalue efficiency for a country that cannot build fast. At the pace Tunisia has shown, a saved MWh is worth more money and much more gas and CO2 than the least-cost 2030 suggests.
 
+## And what does saving cost?
+
+Everything so far treats the saving as free. To know whether it is worth doing, compare what a saved MWh avoids with what it costs to save it. The one Tunisian measure priced that way is the air conditioner, in a 2023 study by Lawrence Berkeley National Laboratory (LBNL) for ANME's planned standard. Numbers from [`results/saving_cost.csv`](../../results/saving_cost.csv); method and sources in [Phase 7](../project-history/phase7-saving-cost.md).
+
+**How the cost is worked out.** An efficient cooling-only AC costs 48 US$ more than today's average unit and uses 90 kWh less a year. Spread the 48 US$ over its 10.5-year life like a loan at 7.1% (the same annuity as for a power plant): about 6.6 US$ a year. Divide by 90 kWh: 7.4 US cents per kWh, or **62 EUR per MWh** saved.
+
+**What it is compared with.** On the pathway, a cooling-first MWh saved is worth 71 EUR at the plants. A MWh saved at the meter also saves the 18% lost in the grid on the way, so it is worth **86 EUR** at the meter.
+
+![Cost per MWh saved by more efficient air conditioners](../../results/figures/13_saving_cost.png)
+
+- **The EU 2014 standard pays:** 50 EUR (reversible units, 79% of sales) and 62 EUR (cooling-only) per MWh saved, against 86 avoided.
+- **The best units are close to break-even:** reversible ones +10 EUR, cooling-only ones -6 EUR per MWh.
+- **For the owner, every level pays,** because they stop paying the top tariff blocks: 128 EUR per MWh.
+- **A standard is only part of the answer:** 9% (EU level) to 25% (best available) of the 15% cooling-first saving in 2030.
+
+**What it tells you:** at least one real Tunisian measure saves electricity for less than the saving is worth, so the "free saving" in the model is not wishful. Whether the *whole* 15% pays depends on measures that have not been priced.
+
 ## All the numbers
 
 | | S0 | S1-10 | S1-15 | S1-20 | S1-15C | S2-300 | S2-600 |

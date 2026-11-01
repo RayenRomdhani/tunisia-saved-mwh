@@ -207,12 +207,17 @@ function road(pw) {
   const committed = Object.entries(pw.committed).filter(([y]) => y >= 2025 && y <= 2028).reduce((a, [, mw]) => a + mw, 0);
   const last = (c) => pw.scenarios[c][pw.scenarios[c].length - 1];
   const s0 = last("S0").res_share, s1 = last("S1-15").res_share;
+  const costs = pw.saving_cost ?? [], cost = Object.fromEntries(costs.map((r) => [r.id, r]));
   const text = {
     solar: fmt(L("pathway_solar_extra_mw_per_year")), solarYear: "2024", windYear: L("pathway_wind_first_year"),
     wind: fmt(L("pathway_wind_extra_mw_per_year")), battery: fmt(L("pathway_battery_mw")), batteryYear: L("pathway_battery_first_year"),
     batteryMwh: fmt(L("pathway_battery_mwh")), committed: fmt(committed / 1000, 1), s0Share: pct(s0),
     gapText: `At the pace Tunisia has shown, renewables reach ${pct(s0)} of generation in 2030, ${fmt((pw.target - s0) * 100)} points short of the ${pct(pw.target)} target. `
       + `Saving 15% by 2030 lifts that to ${pct(s1)}: the same panels and turbines cover a larger part of a smaller demand.`,
+    costText: costs.length ? `The model treats saving as free. The one Tunisian measure priced per kWh saved is the air conditioner (LBNL, 2023). `
+      + `A MWh saved at the meter is worth ${fmt(costs[0].value_eur_per_mwh)} EUR to the power system (grid losses included) and ${fmt(costs[0].tariff_eur_per_mwh)} EUR to the owner. `
+      + `Raising the standard to the EU's 2014 level costs ${fmt(cost.rev_eu.cost_eur_per_mwh)} to ${fmt(cost.cool_eu.cost_eur_per_mwh)} EUR per MWh saved, so it pays; `
+      + `it would cover ${pct(cost.cool_eu.standard_share_of_saving)} of a 15% saving.` : "",
   };
   $$("[data-p]").forEach((e) => { e.textContent = text[e.dataset.p] ?? ""; });
 
@@ -236,6 +241,11 @@ function road(pw) {
   $("#road-table").innerHTML = "<thead><tr><th>Year</th><th class='num'>Cost avoided per MWh saved</th><th class='num'>Gas avoided per MWh saved</th><th class='num'>CO2 avoided per MWh saved</th></tr></thead><tbody>"
     + rows.map((r) => `<tr><td>${r.year === "2027-2030" ? "All four years" : r.year}</td><td class="num">${fmt(r.cost_eur_per_mwh)} EUR</td>`
       + `<td class="num">${fmt(r.gas_mwh_th_per_mwh, 2)} MWh</td><td class="num">${fmt(r.co2_t_per_mwh, 2)} t</td></tr>`).join("") + "</tbody>";
+
+  if (!costs.length) { $("#cost").hidden = true; return; }   // no saving-cost results yet
+  $("#cost-table").innerHTML = "<thead><tr><th>A more efficient air conditioner</th><th class='num'>Cost per MWh saved</th><th class='num'>Worth to the system</th><th class='num'>Net</th></tr></thead><tbody>"
+    + costs.map((r) => `<tr><td>${r.measure}</td><td class="num">${fmt(r.cost_eur_per_mwh)} EUR</td><td class="num">${fmt(r.value_eur_per_mwh)} EUR</td>`
+      + `<td class="num">${r.net_eur_per_mwh > 0 ? "+" : "−"}${fmt(Math.abs(r.net_eur_per_mwh))} EUR</td></tr>`).join("") + "</tbody>";
 }
 
 // ---------- start ----------
