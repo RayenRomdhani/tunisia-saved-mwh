@@ -17,7 +17,7 @@ Reading about a model is fine. Breaking it yourself is better. This chapter gets
    git clone --branch v0.10.0 https://github.com/pypsa-meets-earth/pypsa-earth.git
    ```
    ```bash
-   git clone https://github.com/RayenRomdhani/TEP30-35.git
+   git clone https://github.com/RayenRomdhani/tunisia-saved-mwh.git
    ```
 2. In this repository, create and activate the environment, and install the study's package:
    ```bash
