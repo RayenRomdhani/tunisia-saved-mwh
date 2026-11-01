@@ -61,9 +61,9 @@ def footer(slide, colour=MUTED):
     text(slide, 0.6, 7.0, 12.1, 0.35, SOURCE, size=10, colour=colour)
 
 
-def stat(slide, x, y, w, value, label, value_colour=DARK, label_colour=INK):
+def stat(slide, x, y, w, value, label, value_colour=DARK, label_colour=INK, size=36):
     """A big number with a short label below it."""
-    text(slide, x, y, w, 0.9, value, size=36, colour=value_colour, bold=True, font=HEAD)
+    text(slide, x, y, w, 0.9, value, size=size, colour=value_colour, bold=True, font=HEAD)
     text(slide, x, y + 0.9, w, 0.9, label, size=14, colour=label_colour)
 
 
@@ -135,7 +135,7 @@ def main() -> None:
              (f"{head['capacity_mw_per_twh']:.0f} MW", "of new capacity per TWh saved per year")]
     for i, (value, label) in enumerate(stats):
         card(sl, 0.6 + i * 3.1, 2.5, 2.8, 2.6)
-        stat(sl, 0.8 + i * 3.1, 2.8, 2.4, value, label)
+        stat(sl, 0.7 + i * 3.1, 2.8, 2.6, value, label, size=32)  # 32 pt keeps "0.91 MWh" on one line
     text(sl, 0.6, 5.5, 12.1, 1.2,
          f"The avoided cost is close to the average power price ({s.loc['S0', 'avg_price_eur_mwh']:.0f} EUR/MWh) plus "
          "the gas turbines the saving makes unnecessary.", size=16)
