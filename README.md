@@ -2,7 +2,7 @@
 
 ### Energy efficiency and demand flexibility in Tunisia's 2030 power system, modelled hour by hour with PyPSA-Earth
 
-[![Tests](https://github.com/RayenRomdhani/TEP30-35/actions/workflows/tests.yml/badge.svg)](https://github.com/RayenRomdhani/TEP30-35/actions/workflows/tests.yml) [![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey.svg)](LICENSE-docs.md) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg) ![Model: PyPSA-Earth](https://img.shields.io/badge/model-PyPSA--Earth%20v0.10.0-green.svg)
+[![Tests](https://github.com/RayenRomdhani/tunisia-saved-mwh/actions/workflows/tests.yml/badge.svg)](https://github.com/RayenRomdhani/tunisia-saved-mwh/actions/workflows/tests.yml) [![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey.svg)](LICENSE-docs.md) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg) ![Model: PyPSA-Earth](https://img.shields.io/badge/model-PyPSA--Earth%20v0.10.0-green.svg)
 
 *By Rayen Romdhani, energy engineering student at ENIM (Monastir, Tunisia).*
 
@@ -106,7 +106,7 @@ New to power systems? The learning path explains everything from scratch, one sh
 | 7 | [Try it yourself](docs/learn/07-try-it-yourself.md) | Run the model, add your own scenario |
 | | [Glossary](docs/learn/glossary.md) | Every term in one or two lines |
 
-Prefer a document? There is a [written report](report/report.docx) and a [10-slide deck](report/deck.pptx). Prefer to explore? The [interactive site](site/) tells the study through one summer day: scroll moves the clock across a 3D landscape whose sun, solar field, turbines and gas plant follow the model's real hourly output, then on to the answer, a "choose how Tunisia saves" panel, the four years to 2030 and the limits (see [`site/README.md`](site/README.md) to run it locally).
+Prefer a document? There is a [written report](report/report.pdf) and a [10-slide deck](report/deck.pdf) (editable versions: [report.docx](report/report.docx), [deck.pptx](report/deck.pptx)). Prefer to explore? The [interactive site](site/) tells the study through one summer day: scroll moves the clock across a 3D landscape whose sun, solar field, turbines and gas plant follow the model's real hourly output, then on to the answer, a "choose how Tunisia saves" panel, the four years to 2030 and the limits (see [`site/README.md`](site/README.md) to run it locally).
 
 ## Where the numbers come from
 
@@ -123,7 +123,7 @@ No number in this study is made up. Every input is a row in the [assumptions reg
 | [`src/tn2030/`](src/tn2030/) | The study's Python package |
 | [`scripts/`](scripts/) | Figures, report, slides, register export, 2024 validation (`scripts/dev/` holds one-off helpers) |
 | [`tests/`](tests/) | Automated tests |
-| [`report/`](report/) | Report and slides |
+| [`report/`](report/) | Report and slides: PDF to read, `.docx` and `.pptx` to edit (the scripts write the Office files; the PDFs are exported from them) |
 | [`site/`](site/) | The interactive web page (a scroll story with 3D scenes), fed by `scripts/export_site_data.py` |
 | [`docs/project-history/`](docs/project-history/) | The lab notebook: how the study was built, phase by phase |
 
@@ -135,7 +135,7 @@ You need Windows (the environment file pins Windows builds), [Miniforge](https:/
 git clone --branch v0.10.0 https://github.com/pypsa-meets-earth/pypsa-earth.git
 ```
 ```bash
-git clone https://github.com/RayenRomdhani/TEP30-35.git
+git clone https://github.com/RayenRomdhani/tunisia-saved-mwh.git
 ```
 Then, inside this repository's folder:
 ```bash
